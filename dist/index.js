@@ -129,7 +129,18 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _dis
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("const {Component, render} = __webpack_require__(/*! inferno */ \"./node_modules/inferno/index.esm.js\");\nconst h = __webpack_require__(/*! inferno-hyperscript */ \"./node_modules/inferno-hyperscript/dist/index.esm.js\").h;\n\nclass Main extends Component {\n  constructor(props) {\n    super(props)\n    this.state = {clicks: 0};\n  }\n  componentDidMount() {\n  }\n  render() {\n    return h(\"span\",\n      {onClick: () => this.setState({clicks: this.state.clicks + 1})},\n      \"Hello, world! Clicks: \" + this.state.clicks);\n  }\n}\n\nwindow.onload = () => {\n  render(h(Main), document.getElementById(\"main\"));\n};\n\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("const {Component, render} = __webpack_require__(/*! inferno */ \"./node_modules/inferno/index.esm.js\");\nconst h = __webpack_require__(/*! inferno-hyperscript */ \"./node_modules/inferno-hyperscript/dist/index.esm.js\").h;\nconst Hooked = __webpack_require__(/*! ./inferno-hooked.js */ \"./src/inferno-hooked.js\");\n\nconst Counter = Hooked(({useState}) => {\n  var [count, setCount] = useState(0);\n  return h(\"div\", {onClick: () => setCount(count + 1)}, \"[click-count: \" + count + \"]\");\n});\n\nwindow.onload = () => {\n  render(\n    h(\"div\", {}, [\n      h(Counter),\n      h(Counter),\n      h(Counter)\n    ]),\n    document.getElementById(\"main\"));\n};\n\n\n//# sourceURL=webpack:///./src/index.js?");
+
+/***/ }),
+
+/***/ "./src/inferno-hooked.js":
+/*!*******************************!*\
+  !*** ./src/inferno-hooked.js ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("var stateOf = {};\nconst buildUseState = self => state => {\n  const setState = newState => {\n    stateOf[self._id] = newState;\n    self.forceUpdate();\n  };\n  if (!self._id) {\n    self._id = \"x\" + Math.floor(Math.random() * (2 ** 32));\n    stateOf[self._id] = state;\n  }\n  return [stateOf[self._id], setState];\n};\n\nfunction Hooked(render) {\n  class Self extends Component {\n    constructor(props) {\n      super(props)\n    }\n    componentDidMount() {\n    }\n    render() {\n      return render({useState: buildUseState(this)});\n    }\n  };\n  return Self;\n};\n\nmodule.exports = Hooked;\n\n\n//# sourceURL=webpack:///./src/inferno-hooked.js?");
 
 /***/ })
 

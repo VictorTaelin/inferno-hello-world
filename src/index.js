@@ -1,20 +1,18 @@
 const {Component, render} = require("inferno");
 const h = require("inferno-hyperscript").h;
+const Hooked = require("./hooked.js");
 
-class Main extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {clicks: 0};
-  }
-  componentDidMount() {
-  }
-  render() {
-    return h("span",
-      {onClick: () => this.setState({clicks: this.state.clicks + 1})},
-      "Hello, world! Clicks: " + this.state.clicks);
-  }
-}
+const Counter = Hooked(({useState}) => {
+  var [count, setCount] = useState(0);
+  return h("div", {onClick: () => setCount(count + 1)}, "[click-count: " + count + "]");
+});
 
 window.onload = () => {
-  render(h(Main), document.getElementById("main"));
+  render(
+    h("div", {}, [
+      h(Counter),
+      h(Counter),
+      h(Counter)
+    ]),
+    document.getElementById("main"));
 };
